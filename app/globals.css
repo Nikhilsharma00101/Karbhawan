@@ -1,26 +1,153 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-dm-serif);
+
+  --color-aether-primary: #0F172A;
+  /* Slate 900 */
+  --color-aether-secondary: #475569;
+  /* Slate 600 */
+  --color-aether-muted: #94A3B8;
+  /* Slate 400 */
+  --color-aether-surface: #F8FAFC;
+  /* Slate 50 */
+  --color-titanium-border: #CBD5E1;
+  /* Slate 300 - Distinct boundaries */
+
+  --color-accent-blue: #38BDF8;
+  --color-accent-indigo: #6366F1;
+  --color-cta-blue: #0EA5E9;
+  /* Sky 500 - slightly deeper */
+  --color-cta-soft: #7DD3FC;
+
+  --shadow-titanium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(226, 232, 240, 0.6);
+  --shadow-titanium-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(148, 163, 184, 0.4);
+  --shadow-glass: 0 8px 32px 0 rgba(71, 85, 105, 0.05);
+
+  --background-image-titanium-gradient: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+
+  --background-image-aether-gradient: linear-gradient(180deg, #F8FAFF 0%, #EDF2FF 50%, #FDFEFE 100%);
+  --background-image-accent-gradient: linear-gradient(135deg, #C7D2FE 0%, #93C5FD 100%);
+  --background-image-cta-gradient: linear-gradient(135deg, #60A5FA 0%, #38BDF8 100%);
+  --background-image-glass-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.75) 100%);
+
+  /* Karbhawan Brand Colors */
+  --color-karbhawan-teal: #14B8A6;
+  /* Teal 500 */
+  --color-karbhawan-gold: #EAB308;
+  /* Yellow 500 */
+  --color-karbhawan-midnight: #0F172A;
+  /* Slate 900 */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  .glass-panel {
+    @apply bg-white/70 backdrop-blur-2xl border border-white/50 shadow-glass rounded-[2rem];
+  }
+
+  .titanium-card {
+    @apply bg-white border border-slate-200 shadow-titanium rounded-[2rem] transition-all duration-300;
+  }
+
+  .titanium-card:hover {
+    @apply border-slate-300 shadow-titanium-hover translate-y-[-4px];
+  }
+
+  .btn-primary {
+    @apply px-10 py-4 rounded-2xl bg-gradient-to-r from-cta-soft to-cta-blue text-white text-[10px] font-black uppercase tracking-[0.3em] shadow-lg shadow-blue-200/20 hover:shadow-blue-300/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-500;
+  }
+
+  .btn-secondary {
+    @apply px-10 py-4 rounded-2xl bg-white border border-slate-100 text-aether-secondary text-[10px] font-black uppercase tracking-[0.3em] hover:bg-slate-50 hover:border-cta-soft hover:text-cta-blue transition-all duration-500;
+  }
+
+  .heading-luxe {
+    @apply font-display tracking-tight text-aether-primary leading-[1.1] font-black;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-slate-200/50 rounded-full hover:bg-slate-300;
+  }
+
+  .animate-spin-slow {
+    animation: spin-slow 12s linear infinite;
+  }
+
+  @keyframes spin-slow {
+    from {
+      transform: rotate(0deg);
+    }
+
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .clip-button {
+    clip-path: polygon(0 0, 100% 0, 100% 70%, 90% 100%, 0 100%);
+  }
+
+  .shadow-glow {
+    text-shadow: 0 0 10px rgba(14, 165, 233, 0.6), 0 0 2px rgba(0, 0, 0, 0.2);
+  }
+
+  .badge-titanium {
+    @apply px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border shadow-sm backdrop-blur-md transition-all duration-300;
   }
 }
 
+:root {
+  --background: #F1F5F9;
+  /* Slate 100 - Not white, not dark */
+  --foreground: #0F172A;
+}
+
 body {
-  background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--background);
+  min-height: 100vh;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 20s linear infinite;
 }
