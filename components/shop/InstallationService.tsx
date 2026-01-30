@@ -200,50 +200,52 @@ export default function InstallationService({
                         </div>
 
                         {!isManualMode ? (
-                            <div className="p-6 overflow-y-auto custom-scrollbar">
-                                {/* Brand List */}
-                                <div className="space-y-8">
-                                    {carBrands.map((brandInfo) => (
-                                        <div key={brandInfo.brand}>
-                                            <h4 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-4 sticky top-0 bg-white py-2 z-10">{brandInfo.brand}</h4>
-                                            <div className="grid grid-cols-2 gap-3">
-                                                {brandInfo.models.map((model) => (
-                                                    <button
-                                                        key={model.name}
-                                                        onClick={() => {
-                                                            // Close selection modal
-                                                            setShowModal(false);
-                                                            setIsManualMode(false);
+                            <div className="overflow-y-auto custom-scrollbar flex-1 min-h-0 touch-auto overscroll-contain" data-lenis-prevent>
+                                <div className="p-6">
+                                    {/* Brand List */}
+                                    <div className="space-y-8">
+                                        {carBrands.map((brandInfo) => (
+                                            <div key={brandInfo.brand}>
+                                                <h4 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-4 sticky top-0 bg-white py-2 z-10">{brandInfo.brand}</h4>
+                                                <div className="grid grid-cols-2 gap-3">
+                                                    {brandInfo.models.map((model) => (
+                                                        <button
+                                                            key={model.name}
+                                                            onClick={() => {
+                                                                // Close selection modal
+                                                                setShowModal(false);
+                                                                setIsManualMode(false);
 
-                                                            // Open confirmation modal
-                                                            setConfirmState({
-                                                                isOpen: true,
-                                                                type: 'add',
-                                                                title: "Confirm Installation",
-                                                                description: `Add installation service for ${model.name}?`,
-                                                                onConfirm: () => executeAdd(model.name, model.segment)
-                                                            });
-                                                        }}
-                                                        className="flex flex-col items-start p-4 rounded-xl border border-slate-100 hover:border-indigo-500 hover:bg-indigo-50 transition-all group text-left"
-                                                    >
-                                                        <span className="font-bold text-slate-900 text-sm group-hover:text-indigo-700">{model.name}</span>
-                                                        <span className="text-[10px] uppercase tracking-wider text-slate-400 group-hover:text-indigo-400">{model.segment}</span>
-                                                    </button>
-                                                ))}
+                                                                // Open confirmation modal
+                                                                setConfirmState({
+                                                                    isOpen: true,
+                                                                    type: 'add',
+                                                                    title: "Confirm Installation",
+                                                                    description: `Add installation service for ${model.name}?`,
+                                                                    onConfirm: () => executeAdd(model.name, model.segment)
+                                                                });
+                                                            }}
+                                                            className="flex flex-col items-start p-4 rounded-xl border border-slate-100 hover:border-indigo-500 hover:bg-indigo-50 transition-all group text-left"
+                                                        >
+                                                            <span className="font-bold text-slate-900 text-sm group-hover:text-indigo-700">{model.name}</span>
+                                                            <span className="text-[10px] uppercase tracking-wider text-slate-400 group-hover:text-indigo-400">{model.segment}</span>
+                                                        </button>
+                                                    ))}
+                                                </div>
                                             </div>
-                                        </div>
-                                    ))}
-                                </div>
+                                        ))}
+                                    </div>
 
-                                {/* Not Listed Option */}
-                                <div className="mt-8 pt-6 border-t border-slate-100">
-                                    <button
-                                        onClick={() => setIsManualMode(true)}
-                                        className="w-full py-4 rounded-2xl border-2 border-dashed border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/50 transition-all flex items-center justify-center gap-3 group"
-                                    >
-                                        <PenTool className="w-5 h-5 text-slate-400 group-hover:text-indigo-500" />
-                                        <span className="font-bold text-slate-600 group-hover:text-indigo-700">My Car is Not Listed Here</span>
-                                    </button>
+                                    {/* Not Listed Option */}
+                                    <div className="mt-8 pt-6 border-t border-slate-100">
+                                        <button
+                                            onClick={() => setIsManualMode(true)}
+                                            className="w-full py-4 rounded-2xl border-2 border-dashed border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/50 transition-all flex items-center justify-center gap-3 group"
+                                        >
+                                            <PenTool className="w-5 h-5 text-slate-400 group-hover:text-indigo-500" />
+                                            <span className="font-bold text-slate-600 group-hover:text-indigo-700">My Car is Not Listed Here</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         ) : (
