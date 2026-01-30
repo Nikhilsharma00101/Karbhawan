@@ -105,7 +105,7 @@ export default function InstallationAdminPage() {
     if (loading) return <div className="p-10 text-center">Loading Matrix...</div>;
 
     return (
-        <div className="p-8 max-w-7xl mx-auto">
+        <div className="p-4 md:p-8 max-w-7xl mx-auto">
             <h1 className="text-3xl font-bold text-gray-800 mb-2">Installation Rate Matrix</h1>
             <p className="text-gray-500 mb-8">Manage standard installation fees by Category x Car Segment.</p>
 

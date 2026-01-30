@@ -121,68 +121,70 @@ export default async function AdminOrdersPage({
                 <AdminOrderFilters initialQuery={q} initialStatus={status} />
             </div>
 
-            <div className="aether-card rounded-[2.5rem] border-slate-100 overflow-hidden shadow-sm">
-                <table className="w-full text-left border-collapse">
-                    <thead>
-                        <tr className="bg-slate-50 border-b border-slate-100 text-[10px] font-black uppercase tracking-[0.3em] text-aether-muted">
-                            <th className="p-8 font-black">Order ID</th>
-                            <th className="p-8 font-black">Customer</th>
-                            <th className="p-8 font-black">Date</th>
-                            <th className="p-8 font-black">Status</th>
-                            <th className="p-8 font-black">Total</th>
-                            <th className="p-8 font-black text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-50">
-                        {orders.length === 0 ? (
-                            <tr>
-                                <td colSpan={6} className="p-12 text-center text-aether-muted italic">No orders found matching your criteria.</td>
+            <div className="aether-card rounded-[2.5rem] border-slate-100 overflow-hidden shadow-sm p-0">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse min-w-[900px]">
+                        <thead>
+                            <tr className="bg-slate-50 border-b border-slate-100 text-[10px] font-black uppercase tracking-[0.3em] text-aether-muted">
+                                <th className="p-4 md:p-8 font-black">Order ID</th>
+                                <th className="p-4 md:p-8 font-black">Customer</th>
+                                <th className="p-4 md:p-8 font-black">Date</th>
+                                <th className="p-4 md:p-8 font-black">Status</th>
+                                <th className="p-4 md:p-8 font-black">Total</th>
+                                <th className="p-4 md:p-8 font-black text-right">Actions</th>
                             </tr>
-                        ) : orders.map((order) => (
-                            <tr key={order._id} className="hover:bg-slate-50/50 transition-colors group">
-                                <td className="p-8">
-                                    <span className="text-xs font-black uppercase tracking-widest text-aether-primary bg-slate-100/50 px-3 py-1.5 rounded-lg border border-slate-200/50">
-                                        {formatOrderId(order._id)}
-                                    </span>
-                                </td>
-                                <td className="p-8">
-                                    <div className="space-y-1">
-                                        {/* @ts-ignore - Aggregation lookup result */}
-                                        <p className="text-sm font-bold text-aether-primary font-display">{order.userInfo?.name || "Guest User"}</p>
-                                        {/* @ts-ignore */}
-                                        <p className="text-[10px] text-aether-muted font-medium italic">{order.userInfo?.email}</p>
-                                        {/* Phone Number Display */}
-                                        {order.shippingAddress?.phone ? (
-                                            <p className="text-[10px] text-slate-500 font-mono mt-0.5">{order.shippingAddress.phone}</p>
-                                        ) : (
-                                            <p className="text-[9px] text-slate-300 font-mono mt-0.5">No Phone</p>
-                                        )}
-                                    </div>
-                                </td>
-                                <td className="p-8">
-                                    <span className="text-xs font-medium text-aether-secondary">
-                                        {new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                                    </span>
-                                </td>
-                                <td className="p-8">
-                                    <StatusBadge status={order.orderStatus} />
-                                </td>
-                                <td className="p-8">
-                                    <span className="text-sm font-bold text-aether-primary font-display">₹{order.totalAmount.toLocaleString()}</span>
-                                </td>
-                                <td className="p-8 text-right">
-                                    <Link
-                                        href={`/admin/orders/${order._id}`}
-                                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-100 hover:bg-cta-blue hover:text-white rounded-xl text-[10px] font-black uppercase tracking-[0.2em] text-aether-secondary transition-all shadow-sm hover:shadow-lg group-hover:scale-105 transition-all"
-                                    >
-                                        <Eye className="w-4 h-4" />
-                                        View
-                                    </Link>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody className="divide-y divide-slate-50">
+                            {orders.length === 0 ? (
+                                <tr>
+                                    <td colSpan={6} className="p-12 text-center text-aether-muted italic">No orders found matching your criteria.</td>
+                                </tr>
+                            ) : orders.map((order) => (
+                                <tr key={order._id} className="hover:bg-slate-50/50 transition-colors group">
+                                    <td className="p-4 md:p-8">
+                                        <span className="text-xs font-black uppercase tracking-widest text-aether-primary bg-slate-100/50 px-3 py-1.5 rounded-lg border border-slate-200/50">
+                                            {formatOrderId(order._id)}
+                                        </span>
+                                    </td>
+                                    <td className="p-4 md:p-8">
+                                        <div className="space-y-1">
+                                            {/* @ts-ignore - Aggregation lookup result */}
+                                            <p className="text-sm font-bold text-aether-primary font-display">{order.userInfo?.name || "Guest User"}</p>
+                                            {/* @ts-ignore */}
+                                            <p className="text-[10px] text-aether-muted font-medium italic">{order.userInfo?.email}</p>
+                                            {/* Phone Number Display */}
+                                            {order.shippingAddress?.phone ? (
+                                                <p className="text-[10px] text-slate-500 font-mono mt-0.5">{order.shippingAddress.phone}</p>
+                                            ) : (
+                                                <p className="text-[9px] text-slate-300 font-mono mt-0.5">No Phone</p>
+                                            )}
+                                        </div>
+                                    </td>
+                                    <td className="p-4 md:p-8">
+                                        <span className="text-xs font-medium text-aether-secondary">
+                                            {new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                        </span>
+                                    </td>
+                                    <td className="p-4 md:p-8">
+                                        <StatusBadge status={order.orderStatus} />
+                                    </td>
+                                    <td className="p-4 md:p-8">
+                                        <span className="text-sm font-bold text-aether-primary font-display">₹{order.totalAmount.toLocaleString()}</span>
+                                    </td>
+                                    <td className="p-4 md:p-8 text-right">
+                                        <Link
+                                            href={`/admin/orders/${order._id}`}
+                                            className="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-100 hover:bg-cta-blue hover:text-white rounded-xl text-[10px] font-black uppercase tracking-[0.2em] text-aether-secondary transition-all shadow-sm hover:shadow-lg group-hover:scale-105 transition-all"
+                                        >
+                                            <Eye className="w-4 h-4" />
+                                            View
+                                        </Link>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     );

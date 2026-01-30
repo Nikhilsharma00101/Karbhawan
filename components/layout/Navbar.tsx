@@ -25,6 +25,8 @@ export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
     const pathname = usePathname();
     const { data: session } = useSession();
+
+
     const { items } = useCart();
     const { items: wishlistItems } = useWishlist();
 
@@ -76,6 +78,8 @@ export default function Navbar() {
             y: custom === 1 ? 4 : -4,
         }),
     };
+
+    if (pathname?.startsWith("/admin")) return null;
 
     return (
         <>

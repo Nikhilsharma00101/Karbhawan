@@ -140,12 +140,13 @@ async function getAdminData() {
     };
 }
 
+
 export default async function AdminDashboard() {
     const data = await getAdminData();
     const { stats, chartData, recentOrders, topProducts } = data;
 
     return (
-        <div className="space-y-10 pb-12">
+        <div className="space-y-6 md:space-y-10 pb-12">
             {/* Header section with glass effect */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
@@ -158,17 +159,17 @@ export default async function AdminDashboard() {
                             {format(new Date(), "MMMM dd, yyyy")}
                         </span>
                     </div>
-                    <h2 className="text-5xl heading-luxe">Command Center</h2>
-                    <p className="text-aether-secondary mt-3 font-medium italic max-w-2xl">
+                    <h2 className="text-3xl md:text-5xl heading-luxe">Command Center</h2>
+                    <p className="text-aether-secondary mt-3 font-medium italic max-w-2xl text-sm md:text-base">
                         A real-time holistic view of KarBhawan&apos;s commercial performance and operational health.
                     </p>
                 </div>
 
-                <div className="flex items-center gap-4">
-                    <button className="aether-button-secondary py-3 px-6 text-sm flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-4">
+                    <button className="aether-button-secondary py-3 px-6 text-sm flex items-center gap-2 flex-1 md:flex-none justify-center">
                         Download Report
                     </button>
-                    <Link href="/admin/orders" className="aether-button-primary py-3 px-6 text-sm flex items-center gap-2">
+                    <Link href="/admin/orders" className="aether-button-primary py-3 px-6 text-sm flex items-center gap-2 flex-1 md:flex-none justify-center">
                         Manage Orders
                         <ArrowRight className="w-4 h-4" />
                     </Link>
@@ -176,7 +177,7 @@ export default async function AdminDashboard() {
             </div>
 
             {/* Stats Grid - High Impact Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 <StatsCard
                     title="Total Revenue"
                     value={`₹${stats.totalRevenue.toLocaleString()}`}
@@ -216,12 +217,12 @@ export default async function AdminDashboard() {
             </div>
 
             {/* Main Visualizations Column */}
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 md:gap-8">
                 {/* Revenue & Growth Chart */}
                 <div className="xl:col-span-2 aether-card p-0 border-slate-100 overflow-hidden">
-                    <div className="p-8 border-b border-slate-50 flex items-center justify-between">
+                    <div className="p-4 md:p-8 border-b border-slate-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div>
-                            <h3 className="text-xl font-display font-black text-aether-primary uppercase tracking-widest">Revenue Analytics</h3>
+                            <h3 className="text-lg md:text-xl font-display font-black text-aether-primary uppercase tracking-widest">Revenue Analytics</h3>
                             <p className="text-xs text-aether-muted font-medium mt-1">Daily revenue performance over the last 14 days</p>
                         </div>
                         <div className="flex items-center gap-2">
@@ -231,15 +232,15 @@ export default async function AdminDashboard() {
                             </div>
                         </div>
                     </div>
-                    <div className="p-6 h-[400px]">
+                    <div className="p-4 md:p-6 h-[300px] md:h-[400px]">
                         <DashboardCharts data={chartData} />
                     </div>
                 </div>
 
                 {/* Top Selling Products - Elite Sidebar */}
-                <div className="aether-card p-8 border-slate-100">
-                    <div className="flex items-center justify-between mb-8">
-                        <h3 className="text-xl font-display font-black text-aether-primary uppercase tracking-widest">Premier Products</h3>
+                <div className="aether-card p-4 md:p-8 border-slate-100">
+                    <div className="flex items-center justify-between mb-6 md:mb-8">
+                        <h3 className="text-lg md:text-xl font-display font-black text-aether-primary uppercase tracking-widest">Premier Products</h3>
                         <Link href="/admin/products" className="text-[10px] font-black uppercase text-cta-blue hover:underline">View All</Link>
                     </div>
                     <TopProductsList products={topProducts} />
@@ -247,14 +248,14 @@ export default async function AdminDashboard() {
             </div>
 
             {/* Bottom Row - Operational Excellence */}
-            <div className="grid grid-cols-1 gap-8">
+            <div className="grid grid-cols-1 gap-6 md:gap-8">
                 <div className="aether-card p-0 border-slate-100 overflow-hidden">
-                    <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/30">
+                    <div className="p-4 md:p-8 border-b border-slate-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/30">
                         <div>
-                            <h3 className="text-xl font-display font-black text-aether-primary uppercase tracking-widest">Recent Acquisitions</h3>
+                            <h3 className="text-lg md:text-xl font-display font-black text-aether-primary uppercase tracking-widest">Recent Acquisitions</h3>
                             <p className="text-xs text-aether-muted font-medium mt-1">Real-time order flow and procurement status</p>
                         </div>
-                        <Link href="/admin/orders" className="aether-button-secondary py-2 px-4 text-[10px] uppercase font-black">
+                        <Link href="/admin/orders" className="aether-button-secondary py-2 px-4 text-[10px] uppercase font-black w-full sm:w-auto text-center">
                             Order Ledger
                         </Link>
                     </div>
@@ -279,7 +280,7 @@ function StatsCard({ title, value, icon: Icon, trend, label, color, bgColor }: S
     const isPositive = trend >= 0;
 
     return (
-        <div className="aether-card p-8 group hover:shadow-2xl hover:shadow-slate-200/50 transition-all duration-500 border-slate-100/80 relative overflow-hidden">
+        <div className="aether-card p-6 md:p-8 group hover:shadow-2xl hover:shadow-slate-200/50 transition-all duration-500 border-slate-100/80 relative overflow-hidden">
             {/* Background Decorative Element */}
             <div className={`absolute -right-4 -bottom-4 w-24 h-24 ${bgColor} rounded-full blur-3xl opacity-0 group-hover:opacity-40 transition-opacity duration-700`}></div>
 
@@ -287,11 +288,11 @@ function StatsCard({ title, value, icon: Icon, trend, label, color, bgColor }: S
                 <div className="space-y-4">
                     <div className="space-y-1">
                         <p className="text-[10px] font-black uppercase tracking-[0.3em] text-aether-muted">{title}</p>
-                        <h3 className="text-4xl font-display font-black text-aether-primary leading-tight tracking-tight">{value}</h3>
+                        <h3 className="text-3xl md:text-4xl font-display font-black text-aether-primary leading-tight tracking-tight">{value}</h3>
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <div className={`flex items-center gap-1 text-[10px] font-black px-2 py-1 rounded-md ${isPositive ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
+                        <div className={`flex items-center gap-1 text-[10px] font-black px-2 py-1 rounded-md ${isPositive ? 'bg-emerald-50 text-emerald-600' : 'bg-emerald-50 text-emerald-600'}`}>
                             {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                             {Math.abs(trend).toFixed(1)}%
                         </div>
@@ -299,8 +300,8 @@ function StatsCard({ title, value, icon: Icon, trend, label, color, bgColor }: S
                     </div>
                 </div>
 
-                <div className={`w-14 h-14 rounded-2xl ${bgColor} border-2 border-white flex items-center justify-center ${color} shadow-sm group-hover:scale-110 group-hover:rotate-3 transition-all duration-500`}>
-                    <Icon className="w-6 h-6" />
+                <div className={`w-12 h-12 md:w-14 md:h-14 rounded-2xl ${bgColor} border-2 border-white flex items-center justify-center ${color} shadow-sm group-hover:scale-110 group-hover:rotate-3 transition-all duration-500`}>
+                    <Icon className="w-5 h-5 md:w-6 md:h-6" />
                 </div>
             </div>
         </div>

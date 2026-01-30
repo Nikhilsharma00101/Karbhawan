@@ -43,10 +43,16 @@ const footerLinks = [
     }
 ];
 
+import { usePathname } from "next/navigation";
+
 export default function Footer() {
+    const pathname = usePathname();
+
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: "smooth" });
     };
+
+    if (pathname?.startsWith("/admin")) return null;
 
     return (
         <footer className="relative z-50 bg-slate-950 border-t border-white/[0.05] overflow-hidden">

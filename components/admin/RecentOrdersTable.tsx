@@ -21,21 +21,21 @@ export default function RecentOrdersTable({ orders }: RecentOrdersTableProps) {
 
     return (
         <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse min-w-[800px]">
                 <thead>
                     <tr className="border-b border-slate-50 bg-slate-50/20">
-                        <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-aether-muted">Client</th>
-                        <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-aether-muted">Order ID</th>
-                        <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-aether-muted">Date</th>
-                        <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-aether-muted">Amount</th>
-                        <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-aether-muted">Status</th>
-                        <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-aether-muted text-right">Actions</th>
+                        <th className="px-4 md:px-8 py-4 text-[10px] font-black uppercase tracking-widest text-aether-muted">Client</th>
+                        <th className="px-4 md:px-8 py-4 text-[10px] font-black uppercase tracking-widest text-aether-muted">Order ID</th>
+                        <th className="px-4 md:px-8 py-4 text-[10px] font-black uppercase tracking-widest text-aether-muted">Date</th>
+                        <th className="px-4 md:px-8 py-4 text-[10px] font-black uppercase tracking-widest text-aether-muted">Amount</th>
+                        <th className="px-4 md:px-8 py-4 text-[10px] font-black uppercase tracking-widest text-aether-muted">Status</th>
+                        <th className="px-4 md:px-8 py-4 text-[10px] font-black uppercase tracking-widest text-aether-muted text-right">Actions</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
                     {orders.map((order) => (
                         <tr key={order._id} className="group hover:bg-slate-50/50 transition-colors duration-200">
-                            <td className="px-8 py-5">
+                            <td className="px-4 md:px-8 py-5">
                                 <div className="flex items-center gap-3">
                                     <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden border border-slate-200">
                                         {order.userId?.image ? (
@@ -52,23 +52,23 @@ export default function RecentOrdersTable({ orders }: RecentOrdersTableProps) {
                                     </div>
                                 </div>
                             </td>
-                            <td className="px-8 py-5">
+                            <td className="px-4 md:px-8 py-5">
                                 <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-tighter">
                                     #{order._id.slice(-8)}
                                 </span>
                             </td>
-                            <td className="px-8 py-5">
+                            <td className="px-4 md:px-8 py-5">
                                 <span className="text-[10px] font-bold text-aether-secondary uppercase">
                                     {format(new Date(order.createdAt), "MMM dd, yyyy")}
                                 </span>
                             </td>
-                            <td className="px-8 py-5">
+                            <td className="px-4 md:px-8 py-5">
                                 <span className="text-xs font-black text-aether-primary">₹{order.totalAmount.toLocaleString()}</span>
                             </td>
-                            <td className="px-8 py-5">
+                            <td className="px-4 md:px-8 py-5">
                                 <StatusBadge status={order.orderStatus} />
                             </td>
-                            <td className="px-8 py-5 text-right">
+                            <td className="px-4 md:px-8 py-5 text-right">
                                 <Link
                                     href={`/admin/orders/${order._id}`}
                                     className="inline-flex items-center gap-1.5 py-1.5 px-3 bg-white border border-slate-100 rounded-lg text-[9px] font-black uppercase tracking-widest text-aether-muted hover:border-cta-blue hover:text-cta-blue transition-all group-hover:shadow-sm"

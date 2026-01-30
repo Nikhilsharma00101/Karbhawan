@@ -42,39 +42,39 @@ export default function TestimonialList({ initialTestimonials }: { initialTestim
     }
 
     return (
-        <div className="space-y-12">
-            <div className="flex justify-between items-end">
+        <div className="space-y-8 md:space-y-12">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-2">
-                    <h2 className="text-5xl heading-luxe text-aether-primary">Testimonials</h2>
-                    <p className="text-aether-secondary font-medium italic">Manage customer testimonials.</p>
+                    <h2 className="text-3xl md:text-5xl heading-luxe text-aether-primary">Testimonials</h2>
+                    <p className="text-aether-secondary font-medium italic text-sm md:text-base">Manage customer testimonials.</p>
                 </div>
                 <button
                     onClick={() => {
                         setEditingTestimonial(null);
                         setIsFormOpen(true);
                     }}
-                    className="flex items-center gap-3 bg-gradient-to-r from-cta-soft to-cta-blue text-white px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-blue-100/50 hover:scale-[1.02] transition-all duration-300"
+                    className="flex items-center justify-center gap-3 bg-gradient-to-r from-cta-soft to-cta-blue text-white px-6 py-4 md:px-8 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-blue-100/50 hover:scale-[1.02] transition-all duration-300 w-full md:w-auto"
                 >
                     <Plus className="w-4 h-4" /> Add Testimonial
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
                 {initialTestimonials.map((testi) => (
-                    <div key={testi._id} className="group relative aether-card p-10 flex flex-col h-full hover:shadow-aether transition-all duration-500 border-slate-100">
-                        <div className="flex justify-between items-start mb-8">
+                    <div key={testi._id} className="group relative aether-card p-6 md:p-10 flex flex-col h-full hover:shadow-aether transition-all duration-500 border-slate-100">
+                        <div className="flex justify-between items-start mb-6 md:mb-8">
                             <div>
-                                <h3 className="text-2xl font-display font-black text-aether-primary leading-tight">{testi.name}</h3>
+                                <h3 className="text-xl md:text-2xl font-display font-black text-aether-primary leading-tight">{testi.name}</h3>
                                 {testi.designation && (
-                                    <p className="text-xs uppercase tracking-widest text-cta-blue font-bold mt-1">{testi.designation}</p>
+                                    <p className="text-[10px] md:text-xs uppercase tracking-widest text-cta-blue font-bold mt-1">{testi.designation}</p>
                                 )}
                                 <div className="flex text-cta-soft gap-1 text-xs mt-2">
                                     {Array.from({ length: 5 }).map((_, i) => (
-                                        <Star key={i} className={`w-4 h-4 ${i < testi.rating ? 'fill-current' : 'text-slate-100'}`} />
+                                        <Star key={i} className={`w-3.5 h-3.5 md:w-4 md:h-4 ${i < testi.rating ? 'fill-current' : 'text-slate-100'}`} />
                                     ))}
                                 </div>
                             </div>
-                            <div className="flex gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <div className="flex gap-2 md:gap-3 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300">
                                 <button
                                     onClick={() => {
                                         setEditingTestimonial(testi);
@@ -95,12 +95,12 @@ export default function TestimonialList({ initialTestimonials }: { initialTestim
                             </div>
                         </div>
 
-                        <p className="text-aether-secondary text-sm italic mb-12 flex-1 leading-relaxed border-l-2 border-indigo-50 pl-6 italic">
+                        <p className="text-aether-secondary text-sm italic mb-8 md:mb-12 flex-1 leading-relaxed border-l-2 border-indigo-50 pl-6 italic">
                             &quot;{testi.message}&quot;
                         </p>
 
-                        <div className="flex justify-between items-center pt-8 border-t border-slate-50 mt-auto">
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-aether-muted">
+                        <div className="flex justify-between items-center pt-6 md:pt-8 border-t border-slate-50 mt-auto">
+                            <span className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] text-aether-muted">
                                 Date: {new Date(testi.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' })}
                             </span>
                             <button
