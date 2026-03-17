@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, ShoppingBag, Users, LogOut, Package, Wrench, Menu, X, Home } from "lucide-react";
+import { LayoutDashboard, ShoppingBag, Users, LogOut, Package, Wrench, Menu, X, Home, Mail } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 
@@ -11,6 +11,7 @@ const sidebarLinks = [
     { name: "Products", href: "/admin/products", icon: Package },
     { name: "Orders", href: "/admin/orders", icon: ShoppingBag },
     { name: "Installation", href: "/admin/installation", icon: Wrench },
+    { name: "Newsletter", href: "/admin/newsletter", icon: Mail },
     { name: "Testimonials", href: "/admin/testimonials", icon: Users }, // Reusing Users icon for testimonials for now
 ];
 

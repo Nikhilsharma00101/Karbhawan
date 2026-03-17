@@ -9,6 +9,9 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
+import { useState } from "react";
+import { subscribeToNewsletter } from "@/app/actions/subscribe";
+import { toast } from "sonner";
 
 const footerLinks = [
     {
@@ -47,9 +50,34 @@ import { usePathname } from "next/navigation";
 
 export default function Footer() {
     const pathname = usePathname();
+    const [email, setEmail] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    const handleSubscribe = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!email) {
+            toast.error("Please enter an email address");
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            const result = await subscribeToNewsletter(email);
+            if (result.type === "success" || result.type === "info") {
+                toast.success(result.message);
+                setEmail("");
+            } else {
+                toast.error(result.message);
+            }
+        } catch (error) {
+            toast.error("An error occurred. Please try again.");
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     if (pathname?.startsWith("/admin")) return null;
@@ -103,19 +131,35 @@ export default function Footer() {
                             viewport={{ once: true }}
                             transition={{ delay: 0.3 }}
                             className="flex flex-col sm:flex-row gap-4 max-w-xl"
-                            onSubmit={(e) => e.preventDefault()}
+                            onSubmit={handleSubscribe}
                         >
                             <div className="relative flex-1 group">
                                 <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
                                 <input
                                     type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     placeholder="Enter your email address"
-                                    className="w-full h-16 pl-14 pr-6 rounded-2xl bg-white/5 border border-white/10 text-white text-sm font-bold placeholder:text-slate-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500/50 transition-all"
+                                    required
+                                    disabled={isLoading}
+                                    className="w-full h-16 pl-14 pr-6 rounded-2xl bg-white/5 border border-white/10 text-white text-sm font-bold placeholder:text-slate-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500/50 transition-all disabled:opacity-50"
                                 />
                             </div>
-                            <Button variant="luxury" size="lg" className="h-16 px-10 group">
-                                Subscribe
-                                <Send className="ml-3 w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                            <Button
+                                variant="luxury"
+                                size="lg"
+                                className="h-16 px-10 group min-w-[160px]"
+                                disabled={isLoading}
+                                type="submit"
+                            >
+                                {isLoading ? (
+                                    "Subscribing..."
+                                ) : (
+                                    <>
+                                        Subscribe
+                                        <Send className="ml-3 w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                                    </>
+                                )}
                             </Button>
                         </motion.form>
                     </div>
@@ -174,11 +218,24 @@ export default function Footer() {
                                 text="itskarbhawan2002@gmail.com"
                                 href="mailto:itskarbhawan2002@gmail.com"
                             />
-                            <ContactItem
-                                icon={<Phone className="w-4 h-4" />}
-                                text="+91 98765 43210"
-                                href="tel:+919876543210"
-                            />
+                            <div className="flex items-start gap-4 group">
+                                <div className="mt-0.5 text-slate-400 group-hover:text-indigo-400 transition-colors">
+                                    <Phone className="w-4 h-4" />
+                                </div>
+                                <div className="flex flex-col xl:flex-row gap-2 xl:gap-3 flex-wrap items-start xl:items-center">
+                                    <a href="tel:+919811771141" className="text-slate-300 text-xs font-bold hover:text-white transition-colors">
+                                        +91 98117 71141
+                                    </a>
+                                    <span className="hidden xl:block text-slate-700 text-[10px]">•</span>
+                                    <a href="tel:+919811771143" className="text-slate-300 text-xs font-bold hover:text-white transition-colors">
+                                        +91 98117 71143
+                                    </a>
+                                    <span className="hidden xl:block text-slate-700 text-[10px]">•</span>
+                                    <a href="tel:+919999666778" className="text-slate-300 text-xs font-bold hover:text-white transition-colors">
+                                        +91 99996 66778
+                                    </a>
+                                </div>
+                            </div>
                         </div>
 
                         <div className="flex items-center gap-4">
