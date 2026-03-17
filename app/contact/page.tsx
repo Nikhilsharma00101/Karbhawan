@@ -221,13 +221,13 @@ export default function ContactPage() {
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                             <InputField
                                                 label="Your Name"
-                                                placeholder="John Doe"
+                                                placeholder="Full Name"
                                                 type="text"
                                                 name="name"
                                             />
                                             <InputField
                                                 label="Email Address"
-                                                placeholder="john@example.com"
+                                                placeholder="Email Address"
                                                 type="email"
                                                 name="email"
                                             />
@@ -235,7 +235,7 @@ export default function ContactPage() {
 
                                         <InputField
                                             label="Subject"
-                                            placeholder="Service Inquiry"
+                                            placeholder="Subject of inquiry"
                                             type="text"
                                             name="subject"
                                         />
