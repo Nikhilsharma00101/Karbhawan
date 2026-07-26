@@ -30,9 +30,9 @@ export async function calculateInstallationPrice(
 
         if (!userSegment && carModelName) {
             // Find the segment for the given model name
-            // Flatten the structure to find the model
+            const cleanModelName = carModelName.trim().toLowerCase();
             for (const brand of carBrands) {
-                const model = brand.models.find(m => m.name === carModelName);
+                const model = brand.models.find(m => m.name.toLowerCase() === cleanModelName);
                 if (model) {
                     userSegment = model.segment;
                     break;

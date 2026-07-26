@@ -9,6 +9,7 @@ import { useState, useRef } from "react";
 import Image from "next/image";
 import { categories } from "@/lib/categories";
 import { carBrands } from "@/lib/cars";
+import { normalizeMake, normalizeModel } from "@/lib/vehicle-normalizer";
 import { motion, AnimatePresence } from "framer-motion";
 
 const initialState = {
@@ -45,9 +46,15 @@ export default function NewProductPage() {
     };
 
     const addCompatibility = () => {
-        if (!currentBrand || !currentModel) return;
-        if (compatibilities.some(c => c.make === currentBrand && c.model === currentModel)) return;
-        setCompatibilities([...compatibilities, { make: currentBrand, model: currentModel }]);
+        if (!currentBrand.trim() || !currentModel.trim()) return;
+        const normMake = normalizeMake(currentBrand);
+        const normModel = normalizeModel(normMake, currentModel);
+        if (!normMake || !normModel) return;
+
+        if (compatibilities.some(c => c.make.toLowerCase() === normMake.toLowerCase() && c.model.toLowerCase() === normModel.toLowerCase())) return;
+
+        setCompatibilities([...compatibilities, { make: normMake, model: normModel }]);
+        setCurrentBrand("");
         setCurrentModel("");
     };
 
@@ -346,36 +353,51 @@ export default function NewProductPage() {
 
                                 {!isUniversal && (
                                     <div className="space-y-4">
-                                        <div className="flex gap-4">
-                                            <select
-                                                className={inputClasses}
-                                                value={currentBrand}
-                                                onChange={(e) => { setCurrentBrand(e.target.value); setCurrentModel(""); }}
-                                            >
-                                                <option value="">Select Make</option>
-                                                {carBrands.map(b => (
-                                                    <option key={b.brand} value={b.brand}>{b.brand}</option>
-                                                ))}
-                                            </select>
-                                            <select
-                                                className={inputClasses}
-                                                value={currentModel}
-                                                onChange={(e) => setCurrentModel(e.target.value)}
-                                                disabled={!currentBrand}
-                                            >
-                                                <option value="">Select Model</option>
-                                                {carBrands.find(b => b.brand === currentBrand)?.models.map(m => (
-                                                    <option key={m.name} value={m.name}>{m.name}</option>
-                                                ))}
-                                            </select>
-                                            <button
-                                                type="button"
-                                                onClick={addCompatibility}
-                                                disabled={!currentModel}
-                                                className="w-12 h-[46px] bg-cta-blue text-white rounded-xl flex items-center justify-center hover:bg-blue-600 transition-all shadow-md shadow-blue-200 disabled:opacity-30 disabled:shadow-none shrink-0"
-                                            >
-                                                <Plus className="w-5 h-5" />
-                                            </button>
+                                        <div className="flex flex-col sm:flex-row gap-3">
+                                            <div className="flex-1 relative">
+                                                <input
+                                                    type="text"
+                                                    list="new-car-brands-list"
+                                                    placeholder="Make (e.g. Honda, Tesla)"
+                                                    className={inputClasses}
+                                                    value={currentBrand}
+                                                    onChange={(e) => setCurrentBrand(e.target.value)}
+                                                />
+                                                <datalist id="new-car-brands-list">
+                                                    {carBrands.map(b => (
+                                                        <option key={b.brand} value={b.brand} />
+                                                    ))}
+                                                </datalist>
+                                            </div>
+                                            <div className="flex-1 relative flex gap-2">
+                                                <input
+                                                    type="text"
+                                                    list="new-car-models-list"
+                                                    placeholder="Model (e.g. City, Model 3)"
+                                                    className={inputClasses}
+                                                    value={currentModel}
+                                                    onChange={(e) => setCurrentModel(e.target.value)}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter') {
+                                                            e.preventDefault();
+                                                            addCompatibility();
+                                                        }
+                                                    }}
+                                                />
+                                                <datalist id="new-car-models-list">
+                                                    {carBrands.find(b => b.brand.toLowerCase() === normalizeMake(currentBrand).toLowerCase())?.models.map(m => (
+                                                        <option key={m.name} value={m.name} />
+                                                    ))}
+                                                </datalist>
+                                                <button
+                                                    type="button"
+                                                    onClick={addCompatibility}
+                                                    disabled={!currentBrand.trim() || !currentModel.trim()}
+                                                    className="w-12 h-[46px] bg-cta-blue text-white rounded-xl flex items-center justify-center hover:bg-blue-600 transition-all shadow-md shadow-blue-200 disabled:opacity-30 disabled:shadow-none shrink-0"
+                                                >
+                                                    <Plus className="w-5 h-5" />
+                                                </button>
+                                            </div>
                                         </div>
 
                                         {compatibilities.length > 0 ? (

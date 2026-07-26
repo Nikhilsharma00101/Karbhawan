@@ -6,6 +6,7 @@ import Product from "@/models/Product";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getCategoryLineage } from "@/lib/categories";
+import { normalizeMake, normalizeModel } from "@/lib/vehicle-normalizer";
 
 
 const ProductSchema = z.object({
@@ -82,7 +83,11 @@ export async function createProduct(prevState: { message: string; success: boole
                 ? (JSON.parse(formData.get("specifications") as string) as Record<string, string>)
                 : {},
             compatibility: formData.get("compatibility")
-                ? JSON.parse(formData.get("compatibility") as string)
+                ? (JSON.parse(formData.get("compatibility") as string) as { make: string; model: string; years?: string[] }[]).map(item => ({
+                    ...item,
+                    make: normalizeMake(item.make),
+                    model: normalizeModel(item.make, item.model)
+                })).filter(item => item.make && item.model)
                 : [],
             isUniversal: formData.get("isUniversal") === "on" || formData.get("isUniversal") === "true",
             installationOverride: (formData.get("installationPossible") === "on" || formData.get("installationPossible") === null) // Default true if not present? No, checkbox sends "on" or nothing.
@@ -165,7 +170,11 @@ export async function updateProduct(id: string, prevState: { message: string; su
                 ? (JSON.parse(formData.get("specifications") as string) as Record<string, string>)
                 : {},
             compatibility: formData.get("compatibility")
-                ? JSON.parse(formData.get("compatibility") as string)
+                ? (JSON.parse(formData.get("compatibility") as string) as { make: string; model: string; years?: string[] }[]).map(item => ({
+                    ...item,
+                    make: normalizeMake(item.make),
+                    model: normalizeModel(item.make, item.model)
+                })).filter(item => item.make && item.model)
                 : [],
             isUniversal: formData.get("isUniversal") === "on" || formData.get("isUniversal") === "true",
             installationOverride: (formData.get("installationPossible") === "on" || formData.get("installationPossible") === null)

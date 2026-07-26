@@ -37,8 +37,14 @@ async function getProducts(categorySlug?: string, minPrice?: string, maxPrice?: 
         // Apply Vehicle Compatibility
         if (make || model) {
             let carMatch: any = {};
-            if (make) carMatch["compatibility.make"] = make;
-            if (model) carMatch["compatibility.model"] = model;
+            if (make) {
+                const escapedMake = make.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                carMatch["compatibility.make"] = { $regex: new RegExp(`^${escapedMake}$`, "i") };
+            }
+            if (model) {
+                const escapedModel = model.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                carMatch["compatibility.model"] = { $regex: new RegExp(`^${escapedModel}$`, "i") };
+            }
 
             const carOrUniversal = {
                 $or: [

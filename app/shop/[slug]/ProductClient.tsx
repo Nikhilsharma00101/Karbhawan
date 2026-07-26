@@ -45,6 +45,7 @@ export default function ProductClient({ product, relatedProducts = [] }: Product
     const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || "");
     const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] || "");
     const [showFullDossier, setShowFullDossier] = useState(false);
+    const [showAllCompatibilities, setShowAllCompatibilities] = useState(false);
     const { addToCart } = useCart();
     const { isInWishlist, toggleItem } = useWishlist();
     const [installation, setInstallation] = useState<{ active: boolean; cost: number }>({ active: false, cost: 0 });
@@ -687,20 +688,33 @@ export default function ProductClient({ product, relatedProducts = [] }: Product
                                             <p className="text-indigo-50 font-medium text-sm md:text-base">This component is engineered with a universal mounting architecture, compatible with all standard automotive configurations.</p>
                                         </div>
                                     ) : (
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
-                                            {product.compatibility?.map((item, i) => (
-                                                <div key={i} className="p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] bg-white/5 border border-white/10 backdrop-blur-xl group hover:bg-white hover:text-slate-900 transition-all duration-500">
-                                                    <p className="text-[9px] font-black uppercase tracking-widest text-indigo-400 mb-1 group-hover:text-indigo-600 transition-colors">{item.make}</p>
-                                                    <p className="text-xl md:text-2xl font-black tracking-tight mb-3 md:mb-4">{item.model}</p>
-                                                    <div className="flex flex-wrap gap-2">
-                                                        {item.years?.map(year => (
-                                                            <span key={year} className="px-2.5 py-1 rounded-lg bg-white/10 text-[9px] font-black group-hover:bg-slate-100 group-hover:text-slate-500 transition-colors">
-                                                                {year}
-                                                            </span>
-                                                        ))}
+                                        <div className="space-y-4">
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+                                                {(showAllCompatibilities ? product.compatibility : product.compatibility?.slice(0, 6))?.map((item, i) => (
+                                                    <div key={i} className="p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] bg-white/5 border border-white/10 backdrop-blur-xl group hover:bg-white hover:text-slate-900 transition-all duration-500 overflow-hidden">
+                                                        <p className="text-[9px] font-black uppercase tracking-widest text-indigo-400 mb-1 group-hover:text-indigo-600 transition-colors break-words">{item.make}</p>
+                                                        <p className="text-xl md:text-2xl font-black tracking-tight mb-3 md:mb-4 break-words leading-tight">{item.model}</p>
+                                                        {item.years && item.years.length > 0 && (
+                                                            <div className="flex flex-wrap gap-2">
+                                                                {item.years.map(year => (
+                                                                    <span key={year} className="px-2.5 py-1 rounded-lg bg-white/10 text-[9px] font-black group-hover:bg-slate-100 group-hover:text-slate-500 transition-colors">
+                                                                        {year}
+                                                                    </span>
+                                                                ))}
+                                                            </div>
+                                                        )}
                                                     </div>
-                                                </div>
-                                            ))}
+                                                ))}
+                                            </div>
+                                            {product.compatibility && product.compatibility.length > 6 && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowAllCompatibilities(!showAllCompatibilities)}
+                                                    className="w-full py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/10 text-white text-xs font-black uppercase tracking-widest transition-all cursor-pointer"
+                                                >
+                                                    {showAllCompatibilities ? "Collapse Vehicle List" : `Show All Vehicles (+${product.compatibility.length - 6} More)`}
+                                                </button>
+                                            )}
                                         </div>
                                     )}
                                 </div>
