@@ -74,6 +74,11 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
             <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold text-aether-primary truncate">{item.productId?.name}</p>
                 <p className="text-[10px] text-aether-secondary">Qty: {item.quantity} × ₹{item.price}</p>
+                {item.selectedVehicle?.fullText && (
+                    <p className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded w-fit mt-1">
+                        🚗 Vehicle: {item.selectedVehicle.fullText}
+                    </p>
+                )}
             </div>
             <p className="text-sm font-bold text-aether-primary">₹{item.quantity * item.price}</p>
         </div>

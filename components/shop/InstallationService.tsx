@@ -14,12 +14,16 @@ interface InstallationServiceProps {
     productId: string;
     productName: string;
     onInstallationChange: (hasInstallation: boolean, cost: number) => void;
+    carMake?: string;
+    carModel?: string;
 }
 
 export default function InstallationService({
     productId,
     productName,
-    onInstallationChange
+    onInstallationChange,
+    carMake,
+    carModel
 }: InstallationServiceProps) {
     const { selectedCar, carSegment, selectCar, clearGarage } = useGarage();
     const [price, setPrice] = useState<number | null>(null);
@@ -37,14 +41,19 @@ export default function InstallationService({
         onConfirm: () => void;
     } | null>(null);
 
-    // Manual Mode State
-    const [isManualMode, setIsManualMode] = useState(false);
+    // Manual Mode State (Defaulting true so there are NO dropdowns)
+    const [isManualMode, setIsManualMode] = useState(true);
     const [manualName, setManualName] = useState("");
     const [manualSegment, setManualSegment] = useState<CarSegment>("Hatchback");
 
     useEffect(() => {
         setMounted(true);
     }, []);
+
+    // Derived car name prioritizing parent props (carMake, carModel)
+    const activeCarName = (carMake || carModel)
+        ? [carMake, carModel].filter(Boolean).join(" ")
+        : (selectedCar || (isManualMode ? manualName : undefined));
 
     // Lock body scroll when modal is open
     useEffect(() => {
@@ -61,20 +70,15 @@ export default function InstallationService({
     // Fetch price when car or product changes
     useEffect(() => {
         const fetchPrice = async () => {
-            const currentCarName = selectedCar || (isManualMode ? manualName : undefined);
-            const currentSegment = carSegment || (isManualMode ? manualSegment : undefined);
-
-            if (!currentCarName) return;
+            if (!activeCarName) return;
 
             setLoading(true);
+            const currentSegment = carSegment || (isManualMode ? manualSegment : undefined);
 
-            // Pass manual segment if exists, action will handle priority
-            const res = await calculateInstallationPrice(productId, currentCarName, currentSegment);
+            const res = await calculateInstallationPrice(productId, activeCarName, currentSegment);
 
             if (res.isAvailable && res.price !== null) {
                 setPrice(res.price);
-                // If it was already added, we should update the parent with new price
-                // But only if we are currently "Active" (isAdded)
                 if (isAdded) {
                     onInstallationChange(true, res.price);
                 }
@@ -85,7 +89,7 @@ export default function InstallationService({
         };
 
         fetchPrice();
-    }, [productId, selectedCar, carSegment, isAdded, isManualMode, manualName, manualSegment]);
+    }, [productId, activeCarName, carSegment, isAdded, isManualMode, manualSegment, onInstallationChange]);
 
     // Actual Logic Execution Functions
     const executeRemove = () => {
@@ -342,15 +346,9 @@ export default function InstallationService({
                                 {isAdded && <ShieldCheck className="w-4 h-4 text-emerald-400" />}
                             </div>
                             <div className={cn("text-xs font-medium flex items-center gap-2", isAdded ? "text-slate-400" : "text-slate-500")}>
-                                {selectedCar || (isManualMode && manualName) ? (
+                                {activeCarName ? (
                                     <>
-                                        <span>For <strong>{selectedCar || manualName}</strong></span>
-                                        <button
-                                            onClick={handleChangeVehicle}
-                                            className="ml-2 hover:bg-white/20 p-1 rounded-md transition-colors text-[10px] uppercase font-bold tracking-wider underline flex items-center gap-1"
-                                        >
-                                            <RotateCcw className="w-3 h-3" /> Change
-                                        </button>
+                                        <span>For <strong>{activeCarName}</strong></span>
                                         {isAdded && (
                                             <button
                                                 onClick={handleRemoveRequest}
@@ -361,7 +359,7 @@ export default function InstallationService({
                                         )}
                                     </>
                                 ) : (
-                                    "Check availability for your car"
+                                    "Type car details above for installation"
                                 )}
                             </div>
                         </div>

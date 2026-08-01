@@ -139,7 +139,8 @@ export async function POST(req: Request) {
                 quantity: item.quantity,
                 price: currentPrice,
                 hasInstallation: item.hasInstallation,
-                installationCost: installationCost
+                installationCost: installationCost,
+                selectedVehicle: item.selectedVehicle
             });
         }
 

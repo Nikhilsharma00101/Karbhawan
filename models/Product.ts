@@ -133,6 +133,7 @@ const ProductSchema: Schema<IProduct> = new Schema(
             count: { type: Number, default: 0 },
         },
         compatibility: [{
+            _id: false,
             make: String,
             model: String,
             years: [String]

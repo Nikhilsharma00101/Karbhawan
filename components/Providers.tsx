@@ -5,6 +5,7 @@ import { Toaster } from "sonner";
 import { CartProvider } from "./cart/cart-context";
 import { WishlistProvider } from "./wishlist/wishlist-context";
 import { GarageProvider } from "@/components/shop/GarageContext";
+import AddToCartModal from "./cart/AddToCartModal";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
     return (
@@ -13,6 +14,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
                 <WishlistProvider>
                     <GarageProvider>
                         {children}
+                        <AddToCartModal />
                         <Toaster
                             position="top-center"
                             theme="light"

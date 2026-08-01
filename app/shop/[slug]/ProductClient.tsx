@@ -27,12 +27,14 @@ import {
 import { motion, AnimatePresence, useScroll, useTransform, useSpring } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useCart } from "@/components/cart/cart-context";
 import { useWishlist } from "@/components/wishlist/wishlist-context";
 import Tooltip from "@/components/ui/Tooltip";
 import { toast } from "sonner";
 import ProductBackground from "@/components/shop/ProductBackground";
 import InstallationService from "@/components/shop/InstallationService";
+import { normalizeMake, normalizeModel } from "@/lib/vehicle-normalizer";
 
 interface ProductClientPageProps {
     product: ProductType;
@@ -59,13 +61,63 @@ export default function ProductClient({ product, relatedProducts = [] }: Product
     const hasDiscount = product.discountPrice && product.discountPrice < product.price;
     const savings = hasDiscount ? Math.round(((product.price - product.discountPrice!) / product.price) * 100) : 0;
 
+    const searchParams = useSearchParams();
+    const initialMake = searchParams.get("make") || "";
+    const initialModel = searchParams.get("model") || "";
+
+    const [carMake, setCarMake] = useState(initialMake);
+    const [carModel, setCarModel] = useState(initialModel);
+    const [carYear, setCarYear] = useState("");
+
+    const getFitmentStatus = () => {
+        if (product.isUniversal) {
+            return { type: "universal", message: "Universal Standard (Fits All Vehicles)" };
+        }
+        if (!carMake.trim() && !carModel.trim()) {
+            return { type: "idle", message: "Type your car make & model below to check fitment & tag your order" };
+        }
+
+        const normMake = normalizeMake(carMake);
+        const normModel = normalizeModel(carMake, carModel);
+
+        const match = product.compatibility?.find(item => {
+            const matchMake = normalizeMake(item.make) === normMake || item.make.toLowerCase() === carMake.trim().toLowerCase();
+            const matchModel = normalizeModel(item.make, item.model) === normModel || item.model.toLowerCase() === carModel.trim().toLowerCase();
+            return matchMake && matchModel;
+        });
+
+        if (match) {
+            if (match.years && match.years.length > 0 && carYear.trim()) {
+                const yearMatch = match.years.includes(carYear.trim());
+                if (yearMatch) {
+                    return { type: "valid", message: `Guaranteed Fit for ${normMake} ${normModel} (${carYear.trim()})` };
+                } else {
+                    return { type: "warning", message: `Fits ${normMake} ${normModel}, but check year range (${match.years.join(', ')})` };
+                }
+            }
+            return { type: "valid", message: `Guaranteed Fit for ${normMake} ${normModel}` };
+        }
+
+        return { type: "custom", message: `Custom fitment specified for ${carMake.trim()} ${carModel.trim()}` };
+    };
+
     const handleAddToCart = () => {
+        const vehicleDetails = (carMake.trim() || carModel.trim() || carYear.trim()) ? {
+            make: carMake.trim(),
+            model: carModel.trim(),
+            year: carYear.trim(),
+            fullText: [carMake.trim(), carModel.trim(), carYear.trim()].filter(Boolean).join(" ")
+        } : undefined;
+
         addToCart(product, quantity, {
             hasInstallation: installation.active,
-            installationCost: installation.cost
+            installationCost: installation.cost,
+            selectedVehicle: vehicleDetails
         });
         toast.success(`Reserved Successfully`, {
-            description: `${product.name} has been added to your collection.`,
+            description: vehicleDetails?.fullText
+                ? `${product.name} reserved for ${vehicleDetails.fullText}.`
+                : `${product.name} has been added to your collection.`,
             className: "bg-white border-indigo-100 text-aether-primary font-sans",
         });
     };
@@ -380,10 +432,83 @@ export default function ProductClient({ product, relatedProducts = [] }: Product
                                         </div>
                                     )}
 
+                                    {/* Manual Vehicle Specification Card */}
+                                    <div className="p-6 md:p-8 rounded-[2rem] bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-white space-y-6 shadow-xl border border-indigo-500/20 relative overflow-hidden">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center text-indigo-400">
+                                                    <Car className="w-5 h-5" />
+                                                </div>
+                                                <div>
+                                                    <h4 className="text-sm font-black uppercase tracking-widest text-white">Manual Vehicle Specification</h4>
+                                                    <p className="text-[9px] font-bold uppercase tracking-widest text-indigo-300">Specify your exact car make & model</p>
+                                                </div>
+                                            </div>
+                                            {product.isUniversal && (
+                                                <span className="text-[9px] font-black uppercase tracking-widest px-3 py-1 bg-indigo-500/30 text-indigo-200 border border-indigo-400/30 rounded-full">
+                                                    Universal
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                            <div className="space-y-1.5">
+                                                <label className="text-[9px] font-black uppercase tracking-widest text-slate-400">Car Make</label>
+                                                <input
+                                                    type="text"
+                                                    placeholder="e.g. Mahindra"
+                                                    value={carMake}
+                                                    onChange={(e) => setCarMake(e.target.value)}
+                                                    className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/10 text-white placeholder:text-slate-500 text-xs font-bold focus:outline-none focus:border-indigo-400 transition-colors"
+                                                />
+                                            </div>
+                                            <div className="space-y-1.5">
+                                                <label className="text-[9px] font-black uppercase tracking-widest text-slate-400">Car Model</label>
+                                                <input
+                                                    type="text"
+                                                    placeholder="e.g. XUV700"
+                                                    value={carModel}
+                                                    onChange={(e) => setCarModel(e.target.value)}
+                                                    className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/10 text-white placeholder:text-slate-500 text-xs font-bold focus:outline-none focus:border-indigo-400 transition-colors"
+                                                />
+                                            </div>
+                                            <div className="space-y-1.5">
+                                                <label className="text-[9px] font-black uppercase tracking-widest text-slate-400">Year / Variant</label>
+                                                <input
+                                                    type="text"
+                                                    placeholder="e.g. 2023 AX7"
+                                                    value={carYear}
+                                                    onChange={(e) => setCarYear(e.target.value)}
+                                                    className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/10 text-white placeholder:text-slate-500 text-xs font-bold focus:outline-none focus:border-indigo-400 transition-colors"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Real-time Status Badge */}
+                                        {(() => {
+                                            const fitment = getFitmentStatus();
+                                            return (
+                                                <div className={cn(
+                                                    "p-3 rounded-xl flex items-center gap-3 text-xs font-bold border backdrop-blur-md transition-all",
+                                                    fitment.type === "valid" ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-300" :
+                                                    fitment.type === "warning" ? "bg-amber-500/10 border-amber-500/30 text-amber-300" :
+                                                    fitment.type === "universal" ? "bg-indigo-500/10 border-indigo-500/30 text-indigo-300" :
+                                                    fitment.type === "custom" ? "bg-sky-500/10 border-sky-500/30 text-sky-300" :
+                                                    "bg-white/5 border-white/10 text-slate-400"
+                                                )}>
+                                                    <CheckCircle2 className="w-4 h-4 shrink-0" />
+                                                    <span className="text-[10px] font-bold uppercase tracking-wider">{fitment.message}</span>
+                                                </div>
+                                            );
+                                        })()}
+                                    </div>
+
                                     {/* Installation Service Integration */}
                                     <InstallationService
                                         productId={product._id}
                                         productName={product.name}
+                                        carMake={carMake}
+                                        carModel={carModel}
                                         onInstallationChange={(active, cost) => setInstallation({ active, cost })}
                                     />
                                 </div>

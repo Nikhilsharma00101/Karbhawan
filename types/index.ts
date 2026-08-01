@@ -52,6 +52,12 @@ export interface CartItem {
     image: string;
     hasInstallation?: boolean;
     installationCost?: number;
+    selectedVehicle?: {
+        make?: string;
+        model?: string;
+        year?: string;
+        fullText?: string;
+    };
 }
 
 export interface TestimonialType {

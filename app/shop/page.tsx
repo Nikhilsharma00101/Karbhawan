@@ -68,12 +68,7 @@ async function getProducts(categorySlug?: string, minPrice?: string, maxPrice?: 
 
 
 
-        return products.map(p => ({
-            ...p,
-            _id: p._id.toString(),
-            createdAt: p.createdAt?.toISOString(),
-            updatedAt: p.updatedAt?.toISOString()
-        })) as unknown as ProductType[];
+        return JSON.parse(JSON.stringify(products)) as ProductType[];
     } catch (error) {
         console.error("Failed to fetch products:", error);
         return [];

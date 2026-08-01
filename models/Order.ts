@@ -6,6 +6,12 @@ interface IOrderItem {
     price: number;
     hasInstallation?: boolean;
     installationCost?: number;
+    selectedVehicle?: {
+        make?: string;
+        model?: string;
+        year?: string;
+        fullText?: string;
+    };
 }
 
 export interface IOrderTimeline {
@@ -85,6 +91,13 @@ const OrderSchema: Schema<IOrder> = new Schema(
                 price: { type: Number, required: true },
                 hasInstallation: { type: Boolean, default: false },
                 installationCost: { type: Number, default: 0 },
+                selectedVehicle: {
+                    _id: false,
+                    make: String,
+                    model: String,
+                    year: String,
+                    fullText: String,
+                },
             },
         ],
         totalAmount: {

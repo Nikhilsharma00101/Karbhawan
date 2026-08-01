@@ -4,20 +4,42 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { CartItem, ProductType } from "@/types";
 import { toast } from "sonner";
 
+export interface AddToCartOptions {
+    hasInstallation?: boolean;
+    installationCost?: number;
+    selectedVehicle?: {
+        make?: string;
+        model?: string;
+        year?: string;
+        fullText?: string;
+    };
+}
+
+export interface RecentlyAddedItem {
+    product: ProductType;
+    quantity: number;
+    options?: AddToCartOptions;
+}
+
 interface CartContextType {
     items: CartItem[];
-    addToCart: (product: ProductType, quantity: number, options?: { hasInstallation?: boolean, installationCost?: number }) => void;
+    addToCart: (product: ProductType, quantity: number, options?: AddToCartOptions) => void;
     removeFromCart: (productId: string) => void;
     updateQuantity: (productId: string, quantity: number) => void;
     clearCart: () => void;
     cartTotal: number;
+    recentlyAddedItem: RecentlyAddedItem | null;
+    closeNotification: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
     const [items, setItems] = useState<CartItem[]>([]);
+    const [recentlyAddedItem, setRecentlyAddedItem] = useState<RecentlyAddedItem | null>(null);
     const [isMounted, setIsMounted] = useState(false);
+
+    const closeNotification = () => setRecentlyAddedItem(null);
 
     // Initial load from localStorage
     useEffect(() => {
@@ -39,25 +61,38 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         }
     }, [items, isMounted]);
 
-    const addToCart = (product: ProductType, quantity: number, options?: { hasInstallation?: boolean, installationCost?: number }) => {
+    const addToCart = (product: ProductType, quantity: number, options?: AddToCartOptions) => {
         const hasDiscount = !!(product.discountPrice && product.discountPrice < product.price);
         const finalPrice = hasDiscount ? product.discountPrice! : product.price;
         const originalPriceValue = hasDiscount ? product.price : undefined;
 
+        const isSameVehicle = (v1?: AddToCartOptions["selectedVehicle"], v2?: AddToCartOptions["selectedVehicle"]) => {
+            if (!v1 && !v2) return true;
+            if (!v1 || !v2) return false;
+            return v1.make === v2.make && v1.model === v2.model && v1.year === v2.year && v1.fullText === v2.fullText;
+        };
+
         setItems((prev) => {
-            // Check if item exists with SAME installation options
-            const existing = prev.find((i) => i.productId === product._id && i.hasInstallation === options?.hasInstallation);
+            // Check if item exists with SAME installation options and SAME vehicle
+            const existing = prev.find(
+                (i) =>
+                    i.productId === product._id &&
+                    i.hasInstallation === options?.hasInstallation &&
+                    isSameVehicle(i.selectedVehicle, options?.selectedVehicle)
+            );
 
             if (existing) {
                 return prev.map((i) =>
-                    (i.productId === product._id && i.hasInstallation === options?.hasInstallation)
+                    i.productId === product._id &&
+                    i.hasInstallation === options?.hasInstallation &&
+                    isSameVehicle(i.selectedVehicle, options?.selectedVehicle)
                         ? {
                             ...i,
                             quantity: i.quantity + quantity,
                             price: finalPrice,
                             originalPrice: originalPriceValue,
-                            // Update cost if changed (optional logic)
-                            installationCost: options?.installationCost ?? i.installationCost
+                            installationCost: options?.installationCost ?? i.installationCost,
+                            selectedVehicle: options?.selectedVehicle ?? i.selectedVehicle
                         }
                         : i
                 );
@@ -73,10 +108,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                     name: product.name,
                     image: product.images[0] || "",
                     hasInstallation: options?.hasInstallation,
-                    installationCost: options?.installationCost
+                    installationCost: options?.installationCost,
+                    selectedVehicle: options?.selectedVehicle
                 },
             ];
         });
+
+        // Trigger global floating notification modal
+        setRecentlyAddedItem({ product, quantity, options });
     };
 
     const removeFromCart = (productId: string) => {
@@ -104,7 +143,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     return (
         <CartContext.Provider
-            value={{ items, addToCart, removeFromCart, updateQuantity, clearCart, cartTotal }}
+            value={{ items, addToCart, removeFromCart, updateQuantity, clearCart, cartTotal, recentlyAddedItem, closeNotification }}
         >
             {children}
         </CartContext.Provider>

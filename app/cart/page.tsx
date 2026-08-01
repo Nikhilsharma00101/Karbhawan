@@ -213,6 +213,12 @@ export default function CartPage() {
                                                 </div>
 
                                                 <div className="flex flex-wrap gap-2 md:gap-4 pt-2 md:pt-4">
+                                                     {item.selectedVehicle?.fullText && (
+                                                         <div className="badge-titanium bg-indigo-50 border-indigo-100 text-indigo-700 flex items-center gap-1.5 text-[9px] md:text-[10px] px-2.5 md:px-3 py-1 font-bold">
+                                                             <span>🚗 Vehicle:</span>
+                                                             <span>{item.selectedVehicle.fullText}</span>
+                                                         </div>
+                                                     )}
                                                     <div className="badge-titanium bg-slate-50 flex items-center gap-2 text-[9px] md:text-[10px] px-2 md:px-3">
                                                         High Quality
                                                     </div>
